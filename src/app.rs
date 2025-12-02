@@ -226,8 +226,7 @@ impl App {
             self.containers
                 .iter()
                 .filter(|c| {
-                    c.name.to_lowercase().contains(&query)
-                        || c.node.to_lowercase().contains(&query)
+                    c.name.to_lowercase().contains(&query) || c.node.to_lowercase().contains(&query)
                 })
                 .collect()
         }
@@ -238,7 +237,9 @@ impl App {
     }
 
     pub fn selected_container(&self) -> Option<&Container> {
-        self.filtered_containers().get(self.container_index).copied()
+        self.filtered_containers()
+            .get(self.container_index)
+            .copied()
     }
 
     pub fn quit(&mut self) {
@@ -369,7 +370,12 @@ mod tests {
         }
     }
 
-    fn create_test_container(name: &str, node: &str, status: ContainerStatus, cpu: f64) -> Container {
+    fn create_test_container(
+        name: &str,
+        node: &str,
+        status: ContainerStatus,
+        cpu: f64,
+    ) -> Container {
         Container {
             vmid: 100,
             name: name.to_string(),
@@ -585,9 +591,7 @@ mod tests {
     #[test]
     fn test_search_case_insensitive() {
         let mut app = App::new();
-        app.nodes = vec![
-            create_test_node("ProductionNode", NodeStatus::Online, 10.0),
-        ];
+        app.nodes = vec![create_test_node("ProductionNode", NodeStatus::Online, 10.0)];
 
         app.search_query = "production".to_string();
         assert_eq!(app.filtered_nodes().len(), 1);

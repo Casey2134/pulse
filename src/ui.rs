@@ -1,22 +1,22 @@
 use ratatui::{
+    Frame,
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, Clear, List, ListItem, Paragraph, Gauge},
-    Frame,
+    widgets::{Block, Borders, Clear, Gauge, List, ListItem, Paragraph},
 };
 
 use crate::app::{App, InputMode, Panel};
-use crate::models::{format_bytes, format_uptime, ContainerStatus, NodeStatus};
+use crate::models::{ContainerStatus, NodeStatus, format_bytes, format_uptime};
 
 pub fn draw(frame: &mut Frame, app: &App) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([
-            Constraint::Length(3),  // Header
-            Constraint::Min(8),     // Main panels
-            Constraint::Length(7),  // Detail panel
-            Constraint::Length(1),  // Status bar
+            Constraint::Length(3), // Header
+            Constraint::Min(8),    // Main panels
+            Constraint::Length(7), // Detail panel
+            Constraint::Length(1), // Status bar
         ])
         .split(frame.area());
 
@@ -42,7 +42,12 @@ fn draw_header(frame: &mut Frame, app: &App, area: Rect) {
     let (containers_running, containers_total) = app.containers_summary();
 
     let title = vec![
-        Span::styled(" PULSE ", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)),
+        Span::styled(
+            " PULSE ",
+            Style::default()
+                .fg(Color::Cyan)
+                .add_modifier(Modifier::BOLD),
+        ),
         Span::raw("| "),
         Span::styled(
             format!("Nodes: {}/{}", nodes_online, nodes_total),
@@ -63,7 +68,11 @@ fn draw_header(frame: &mut Frame, app: &App, area: Rect) {
         ),
         Span::raw(" | "),
         Span::styled(
-            format!("Sort: {} {}", app.sort_field.label(), if app.sort_ascending { "^" } else { "v" }),
+            format!(
+                "Sort: {} {}",
+                app.sort_field.label(),
+                if app.sort_ascending { "^" } else { "v" }
+            ),
             Style::default().fg(Color::Gray),
         ),
         Span::raw(" | "),
@@ -224,8 +233,8 @@ fn draw_detail_panel(frame: &mut Frame, app: &App, area: Rect) {
             if let Some(node) = app.selected_node() {
                 draw_node_details(frame, node, inner);
             } else {
-                let msg = Paragraph::new("No node selected")
-                    .style(Style::default().fg(Color::DarkGray));
+                let msg =
+                    Paragraph::new("No node selected").style(Style::default().fg(Color::DarkGray));
                 frame.render_widget(msg, inner);
             }
         }
@@ -316,7 +325,10 @@ fn draw_container_details(frame: &mut Frame, container: &crate::models::Containe
     };
 
     let title_line = Line::from(vec![
-        Span::styled(&container.name, Style::default().add_modifier(Modifier::BOLD)),
+        Span::styled(
+            &container.name,
+            Style::default().add_modifier(Modifier::BOLD),
+        ),
         Span::raw(format!(" (ID: {}) | ", container.vmid)),
         type_span,
         Span::raw(" | Node: "),
@@ -360,7 +372,10 @@ fn draw_status_bar(frame: &mut Frame, app: &App, area: Rect) {
         }
         InputMode::Normal => {
             if let Some(ref error) = app.error_message {
-                (format!(" Error: {} ", error), Style::default().fg(Color::Red))
+                (
+                    format!(" Error: {} ", error),
+                    Style::default().fg(Color::Red),
+                )
             } else {
                 let text =
                     " q:Quit  Tab:Panel  j/k:Nav  r:Refresh  s:Sort  /:Search  ?:Help ".to_string();

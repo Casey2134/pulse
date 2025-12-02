@@ -1,4 +1,4 @@
-use crate::models::{Node, Container};
+use crate::models::{Container, Node};
 
 pub trait Provider {
     fn name(&self) -> &str;

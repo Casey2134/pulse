@@ -22,10 +22,7 @@ impl ProxmoxProvider {
             .connect_timeout(Duration::from_secs(5))
             .build()?;
 
-        let auth_header = format!(
-            "PVEAPIToken={}={}",
-            config.token_id, config.token_secret
-        );
+        let auth_header = format!("PVEAPIToken={}={}", config.token_id, config.token_secret);
 
         Ok(Self {
             name: config.name.clone(),
