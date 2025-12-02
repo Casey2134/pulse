@@ -1,0 +1,9 @@
+[general]
+refresh_rate = "5s"
+
+[[providers.proxmox]]
+name = "My Proxmox Server"
+host = "https://your-proxmox-host:8006"
+user = "root@pam"
+token_id = "root@pam!your-token-name"
+token_secret = "your-token-secret-here"
