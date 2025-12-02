@@ -13,9 +13,6 @@ jobs:
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
             name: linux-amd64
-          - os: ubuntu-latest
-            target: aarch64-unknown-linux-gnu
-            name: linux-arm64
           - os: macos-latest
             target: x86_64-apple-darwin
             name: macos-amd64
@@ -32,26 +29,39 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install Rust
-        uses: dtolnay/rust-action@stable
+        uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.target }}
 
       - name: Build
         run: cargo build --release --target ${{ matrix.target }}
 
+      - name: Rename binary
+        shell: bash
+        run: |
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then
+            mv target/${{ matrix.target }}/release/pulse.exe pulse-${{ matrix.name }}.exe
+          else
+            mv target/${{ matrix.target }}/release/pulse pulse-${{ matrix.name }}
+          fi
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: pulse-${{ matrix.name }}
-          path: target/${{ matrix.target }}/release/pulse${{ matrix.os == 'windows-latest' && '.exe' || '' }}
+          path: pulse-${{ matrix.name }}*
 
   release:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          files: pulse-*/*
+          files: artifacts/**/*
